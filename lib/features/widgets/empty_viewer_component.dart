@@ -11,6 +11,7 @@ class EmptyViewerComponent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Icon(Icons.do_not_disturb_alt, size: SizesHelper.fontSize(80),),
         const TextComponent(textKey: 'Nothing found here !'),
