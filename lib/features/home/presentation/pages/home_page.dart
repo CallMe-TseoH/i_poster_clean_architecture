@@ -23,10 +23,22 @@ class HomePage extends StatelessWidget {
         statusBarColor: AppColors.white,
       ),
       child: Scaffold(
+        appBar: AppBar(
+          actions: [
+            IconButton(
+                onPressed: () {
+                  context.read<HomeCubit>().getPosts();
+                },
+                icon: Icon(
+                  Icons.refresh,
+                  color: AppColors.dark,
+                ))
+          ],
+        ),
         body: Column(
           children: [
             ExtendedContainer(
-              height: SizesHelper.height(230),
+              height: SizesHelper.height(150),
               child: Center(
                   child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -69,9 +81,17 @@ class HomePage extends StatelessWidget {
                       );
                     case EventStatusEnum.failure:
                       if (state.posts.isEmpty) {
-                        return const EmptyViewerComponent();
+                        return EmptyViewerComponent(
+                          onTryAgainPressed: () {
+                            context.read<HomeCubit>().getPosts();
+                          },
+                        );
                       }
-                      return const ErrorViewerComponent();
+                      return ErrorViewerComponent(
+                        onTryAgainPressed: () {
+                          context.read<HomeCubit>().getPosts();
+                        },
+                      );
                     default:
                       return const AppSpin();
                   }
@@ -85,14 +105,15 @@ class HomePage extends StatelessWidget {
           listener: (context, state) {
             if (state.onDeletePostsGroup) {
               showDialog<dynamic>(
-                  useSafeArea: false,
-                  barrierDismissible: false,
-                  context: context,
-                  builder: (_) {
-                    return const AppSpin();
-                  },);
-            }else{
-              if(ModalRoute.of(context)?.isCurrent != true) {
+                useSafeArea: false,
+                barrierDismissible: false,
+                context: context,
+                builder: (_) {
+                  return const AppSpin();
+                },
+              );
+            } else {
+              if (ModalRoute.of(context)?.isCurrent != true) {
                 Navigator.of(context).pop();
               }
             }

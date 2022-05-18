@@ -22,14 +22,17 @@ class HomeCubit extends HydratedCubit<HomeState> {
   JsonMap? toJson(HomeState state) => state.toJson();
 
   Future<void> getPosts() async {
-    emit(state.copyWith(status: EventStatusEnum.loading));
-    try {
-      await GetPostsList(postRepository: _postRepository).execute(NoParams()).then((value) {
-        emit(state.copyWith(status: EventStatusEnum.success, posts: value));
-      });
-    } catch (e, stack) {
-      emit(state.copyWith(status: EventStatusEnum.failure));
+    if(state.status != EventStatusEnum.loading){
+      emit(state.copyWith(status: EventStatusEnum.loading));
+      try {
+        await GetPostsList(postRepository: _postRepository).execute(NoParams()).then((value) {
+          emit(state.copyWith(status: EventStatusEnum.success, posts: value));
+        });
+      } catch (e, stack) {
+        emit(state.copyWith(status: EventStatusEnum.failure));
+      }
     }
+
   }
 
   Future<void> deletePost({required int id}) async {
